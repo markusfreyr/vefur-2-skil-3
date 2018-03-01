@@ -1,6 +1,13 @@
 /* todo sækja pakka sem vantar  */
 
-const connectionString = process.env.DATABASE_URL;
+const knex = require('knex')({
+  client: 'pg',
+  connection: {
+    host: '127.0.0.1',
+    searchPath: ['knex', 'public'],
+  },
+});
+
 
 /**
  * Create a note asynchronously.
@@ -14,6 +21,9 @@ const connectionString = process.env.DATABASE_URL;
  */
 async function create({ title, text, datetime } = {}) {
   /* todo útfæra */
+  return knex('notes')
+    .returning(['id', 'datetime', 'title', 'text'])
+    .insert([{ datetime, title, text }]);
 }
 
 /**
@@ -23,6 +33,8 @@ async function create({ title, text, datetime } = {}) {
  */
 async function readAll() {
   /* todo útfæra */
+  return knex.select('*')
+    .from('notes');
 }
 
 /**
@@ -34,6 +46,9 @@ async function readAll() {
  */
 async function readOne(id) {
   /* todo útfæra */
+  return knex.select('*')
+    .from('notes')
+    .where('id', id);
 }
 
 /**
@@ -49,6 +64,10 @@ async function readOne(id) {
  */
 async function update(id, { title, text, datetime } = {}) {
   /* todo útfæra */
+  return knex('notes')
+    .where('id', id)
+    .update({ title, text, datetime })
+    .returning(['id', 'datetime', 'title', 'text']);
 }
 
 /**
@@ -60,6 +79,9 @@ async function update(id, { title, text, datetime } = {}) {
  */
 async function del(id) {
   /* todo útfæra */
+  return knex('notes')
+    .where('id', id)
+    .del();
 }
 
 module.exports = {
